@@ -158,6 +158,7 @@ public class TreeIconDemo extends JPanel implements TreeSelectionListener {
         frame.pack();
         frame.setVisible(true);
     }
+    
     public static void main(Node n) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
