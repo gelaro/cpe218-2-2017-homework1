@@ -72,9 +72,7 @@ public class Homework1 {
 
     public static void main(String[] args) {
         // TODO: Implement your project here
-        String data = "";
-        Scanner in = new Scanner(System.in);
-        data = in.nextLine();
+        String data = "251-*32*+";
         if(args.length > 0) data = args[0];
         for(int i = 0; i < data.length(); i++) {
 //			System.out.print(data.charAt(i));

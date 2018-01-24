@@ -14,12 +14,11 @@ import java.awt.*;
 public class TreeIconDemo extends JPanel implements TreeSelectionListener {
     private JEditorPane htmlPane;
     private JTree tree;
-    DefaultMutableTreeNode top;
-    DefaultMutableTreeNode current;
+    DefaultMutableTreeNode root; //tree node of root node
+    DefaultMutableTreeNode node; //tree node of child node
 
     public TreeIconDemo(Node n) {
         super(new GridLayout(1,0));
-
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(n.getNodeName());
         createNodes(n, top);
 
@@ -30,7 +29,8 @@ public class TreeIconDemo extends JPanel implements TreeSelectionListener {
         ImageIcon leafIcon = createImageIcon("middle.gif");
         if (leafIcon != null) {
             DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-            renderer.setLeafIcon(leafIcon);
+            renderer.setOpenIcon(leafIcon); //set open leaf icon
+            renderer.setClosedIcon(leafIcon); //set close leaf icon
             tree.setCellRenderer(renderer);
         } else {
             System.err.println("Leaf icon missing; using default.");
@@ -51,25 +51,28 @@ public class TreeIconDemo extends JPanel implements TreeSelectionListener {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(treeView);
         splitPane.setBottomComponent(htmlView);
-        Dimension minimumSize = new Dimension(100, 50);
+        Dimension minimumSize = new Dimension(100, 100);
         htmlView.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
         splitPane.setDividerLocation(100); //XXX: ignored in some releases
-        //of Swing. bug 4101306
-        //workaround for bug 4101306:
         //treeView.setPreferredSize(new Dimension(100, 100));
-
         splitPane.setPreferredSize(new Dimension(500, 300));
-
         //Add the split pane to this panel.
         add(splitPane);
     }
-
+    public boolean isOperate(char string) {
+        if(string == '+' || string == '-' ||
+                string == '*' || string == '/') {
+            return true;
+        }else {
+            return false;
+        }
+    }
     public String inorder(DefaultMutableTreeNode n) {
         if (n == null) return "";
-        if(n == current && !n.isLeaf()) {
+        if(n == node && !n.isLeaf()) {
             return 	inorder(n.getNextNode()) + n.toString() + inorder(n.getNextNode().getNextSibling());
-        }else if(Homework1.isOperate(n.toString().charAt(0)) && n != top) {
+        }else if(isOperate(n.toString().charAt(0)) && n != root) {
             return "(" + inorder(n.getNextNode()) + n.toString() + inorder(n.getNextNode().getNextSibling()) + ")";
         }else {
             return 	n.toString();
@@ -102,32 +105,30 @@ public class TreeIconDemo extends JPanel implements TreeSelectionListener {
         }
         return result;
     }
-
     /** Required by TreeSelectionListener interface. */
     public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode current = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-        if (current == null) return;
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+        if (node == null) return;
 //        Object nodeInfo = node.getUserObject();
-        htmlPane.setFont(new Font("Angsana New", 1, 50));
-        String text = inorder(current);
-        if(!current.isLeaf()) text += "=" + calculate(current);
+        htmlPane.setFont(new Font("Angsana New", 1, 60));
+        String text = inorder(node);
+        if(!node.isLeaf()) text += "=" + calculate(node);
         htmlPane.setText(text);
     }
 
     private void createNodes(Node n, DefaultMutableTreeNode m) {
-        DefaultMutableTreeNode first_child = null;
-        DefaultMutableTreeNode second_child = null;
+        DefaultMutableTreeNode right_child = null;
+        DefaultMutableTreeNode left_child = null;
 
         NodeList list = n.getChildNodes();
         if(list.item(0) == null || list.item(1) == null) return;
-        first_child = new DefaultMutableTreeNode(list.item(1).getNodeName());
-        createNodes(list.item(1), first_child);
-        m.add(first_child);
-        second_child = new DefaultMutableTreeNode(list.item(0).getNodeName());
-        createNodes(list.item(0), second_child);
-        m.add(second_child);
+        right_child = new DefaultMutableTreeNode(list.item(1).getNodeName());
+        createNodes(list.item(1), right_child);
+        m.add(right_child);
+        left_child = new DefaultMutableTreeNode(list.item(0).getNodeName());
+        createNodes(list.item(0), left_child);
+        m.add(left_child);
     }
-
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = TreeIconDemo.class.getResource(path);
@@ -138,7 +139,6 @@ public class TreeIconDemo extends JPanel implements TreeSelectionListener {
             return null;
         }
     }
-
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
