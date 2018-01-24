@@ -39,7 +39,8 @@ public class Homework1 {
         int left_value = Integer.parseInt(list.item(1).getNodeValue()); //value of left node (0-9)
         int right_value = Integer.parseInt(list.item(0).getNodeValue()); //value of right node (0-9)
         int result = 0; //result
-        switch(n.getNodeName()) { //operation
+        String operand = n.getNodeName();
+        switch(operand) { //operation
             case "+" :{
                 result = left_value + right_value;
                 break;
@@ -70,23 +71,11 @@ public class Homework1 {
     }
 
     public static void main(String[] args) {
-        // Begin of arguments input sample
-        if (args.length > 0) {
-            String input = args[0];
-            if (input.equalsIgnoreCase("251-*32*+")) {
-				System.out.println("(2*(5-1))+(3*2)=14");
-            }
-        }
-        // End of arguments input sample
-
         // TODO: Implement your project here
-        String data;
-//		data = " "
+        String data = "";
         Scanner in = new Scanner(System.in);
         data = in.nextLine();
-        in.close();
-//		System.out.println(data.length());
-
+        if(args.length > 0) data = args[0];
         for(int i = 0; i < data.length(); i++) {
 //			System.out.print(data.charAt(i));
             stack.push(data.charAt(i));
@@ -96,5 +85,6 @@ public class Homework1 {
         infix(root);
         inorder(root);
         System.out.print("=" + root.getNodeValue());
+        TreeIconDemo.main(root);
     }
 }
