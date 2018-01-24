@@ -3,8 +3,8 @@ import javax.imageio.metadata.*;
 import java.util.*;
 
 public class Homework1 {
-    static  Stack stack = new Stack();
-    static  Node root; //root node
+    static  Stack stack = new Stack(); //stack
+    static  Node root= null; //root node
 
     public static void infix(Node n) {
         //base case
@@ -71,18 +71,21 @@ public class Homework1 {
     }
 
     public static void main(String[] args) {
-        // TODO: Implement your project here
         String data = "251-*32*+";
+        // TODO: Implement your project here
+//        Scanner in = new Scanner(System.in);
+//        data = in.nextLine();
+//        in.close();
+
         if(args.length > 0) data = args[0];
+
         for(int i = 0; i < data.length(); i++) {
-//			System.out.print(data.charAt(i));
             stack.push(data.charAt(i));
         }
-//		System.out.println();
         root = new IIOMetadataNode(stack.pop().toString());
-        infix(root);
         inorder(root);
-        System.out.print("=" + root.getNodeValue());
+        infix(root);
+        System.out.println("=" + root.getNodeValue());
         TreeIconDemo.main(root);
     }
 }
